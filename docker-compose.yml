@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  blog:
+    image: blog
+    build: ./git
+    working_dir: /home
+    tty: true
+    ports:
+      - 1313:1313
+    volumes:
+      - ./www:/home
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        rm -rf /home/blog
+        cd /home
+        git clone git://github.com/Chance-fyi/blog.git
+        cd /home/blog
+        hugo server --bind 0.0.0.0
