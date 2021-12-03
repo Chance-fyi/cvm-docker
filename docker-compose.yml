@@ -17,4 +17,14 @@ services:
         cd /home
         git clone git://github.com/Chance-fyi/blog.git
         cd /home/blog
-        hugo server --bind 0.0.0.0
+        hugo server
+  nginx:
+    image: nginx
+    working_dir: /home
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./www:/home
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/cert:/etc/nginx/cert
