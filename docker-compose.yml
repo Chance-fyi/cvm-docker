@@ -17,7 +17,7 @@ services:
         cd /home
         git clone git://github.com/Chance-fyi/blog.git
         cd /home/blog
-        hugo server
+        hugo
   nginx:
     image: nginx
     working_dir: /home
