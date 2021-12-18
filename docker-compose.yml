@@ -6,9 +6,10 @@ services:
     working_dir: /home
     tty: true
     ports:
-      - 1313:1313
+      - 9000:9000
     volumes:
       - ./www:/home
+      - ./webhook:/webhook
     command: 
       - /bin/bash
       - -c
@@ -18,6 +19,8 @@ services:
         git clone git://github.com/Chance-fyi/blog.git
         cd /home/blog
         hugo
+        chmod +x -R /webhook/sh
+        webhook -hooks /webhook/hooks.json -hotreload
   nginx:
     image: nginx
     working_dir: /home

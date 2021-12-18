@@ -1,5 +1,6 @@
 FROM bitnami/git
 
 COPY hugo /usr/local/bin
+COPY webhook /usr/local/bin
 
-RUN chmod +x /usr/local/bin/hugo
+RUN chmod +x -R /usr/local/bin

@@ -1,0 +1,36 @@
+[
+    {
+      "id": "blog",
+      "execute-command": "/webhook/sh/blog.sh",
+      "trigger-rule":
+      {
+        "and":
+        [
+          {
+            "match":
+            {
+              "type": "payload-hmac-sha1",
+              "secret": "你在github设置的secret",
+              "parameter":
+              {
+                "source": "header",
+                "name": "X-Hub-Signature"
+              }
+            }
+          },
+          {
+            "match":
+            {
+              "type": "value",
+              "value": "refs/heads/master",
+              "parameter":
+              {
+                "source": "payload",
+                "name": "ref"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
