@@ -1,7 +1,7 @@
 [
     {
       "id": "blog",
-      "execute-command": "/webhook/sh/blog.sh",
+      "execute-command": "/sh/blog-webhook.sh",
       "trigger-rule":
       {
         "and":

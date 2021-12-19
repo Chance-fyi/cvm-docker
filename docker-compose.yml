@@ -10,6 +10,7 @@ services:
     volumes:
       - ./www:/home
       - ./webhook:/webhook
+      - ./sh:/sh
     command: 
       - /bin/bash
       - -c
@@ -19,15 +20,23 @@ services:
         git clone git://github.com/Chance-fyi/blog.git
         cd /home/blog
         hugo
-        chmod +x -R /webhook/sh
+        chmod +x -R /sh
         webhook -hooks /webhook/hooks.json -hotreload
   nginx:
     image: nginx
     working_dir: /home
+    tty: true
     ports:
       - 80:80
       - 443:443
     volumes:
       - ./www:/home
+      - ./sh:/sh
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/cert:/etc/nginx/cert
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        chmod +x -R /sh
+        /sh/wait-for-it.sh blog:9000 -- nginx -g 'daemon off;'
