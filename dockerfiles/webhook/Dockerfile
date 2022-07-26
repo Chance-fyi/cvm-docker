@@ -4,3 +4,5 @@ COPY hugo /usr/local/bin
 COPY webhook /usr/local/bin
 
 RUN chmod +x -R /usr/local/bin
+
+ENTRYPOINT ["sh","/sh/webhook.sh"]

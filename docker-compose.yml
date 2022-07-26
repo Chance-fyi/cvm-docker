@@ -1,42 +1,45 @@
-version: "3.7"
+version: "3.9"
 services:
-  blog:
-    image: blog
-    build: ./git
-    working_dir: /home
-    tty: true
-    ports:
-      - 9000:9000
+  mysql:
+    image: mysql:8.0.29
+    container_name: mysql
     volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./conf/mysql:/etc/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "test"
+  redis:
+    image: redis:7.0.4
+    container_name: redis
+    volumes:
+      - ./data/redis:/data
+    restart: always
+  webhook:
+    build: ./dockerfiles/webhook
+    container_name: webhook
+    volumes:
+      - ./conf/webhook/.ssh:/root/.ssh
       - ./www:/home
-      - ./webhook:/webhook
-      - ./sh:/sh
-    command: 
-      - /bin/bash
-      - -c
-      - |
-        rm -rf /home/blog
-        cd /home
-        git clone git://github.com/Chance-fyi/blog.git
-        cd /home/blog
-        hugo
-        chmod +x -R /sh
-        webhook -hooks /webhook/hooks.json -hotreload
+      - ./sh/webhook/:/sh
+    tty: true
+    restart: always
   nginx:
     image: nginx
-    working_dir: /home
-    tty: true
+    container_name: nginx
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./www:/home
       - ./sh:/sh
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/cert:/etc/nginx/cert
-    command: 
+      - ./www:/home
+      - ./conf/nginx/conf:/etc/nginx/conf.d
+      - ./conf/nginx/cert:/etc/nginx/cert
+    command:
       - /bin/bash
       - -c
       - |
         chmod +x -R /sh
-        /sh/wait-for-it.sh blog:9000 -- nginx -g 'daemon off;'
+        /sh/wait-for-it.sh webhook:9000 -- nginx -g 'daemon off;'
+    restart: always
